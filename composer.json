@@ -1,0 +1,25 @@
+{
+    "name": "sifrious/harness-contract-fixtures",
+    "description": "Sanitized executable fixtures for cross-package Harness contract tests.",
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": "^8.4.1"
+    },
+    "require-dev": {
+        "opis/json-schema": "^2.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sifrious\\HarnessContractFixtures\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": "php bin/verify"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

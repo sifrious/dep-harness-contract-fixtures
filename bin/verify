@@ -1,0 +1,106 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Opis\JsonSchema\Errors\ErrorFormatter;
+use Opis\JsonSchema\Validator;
+use Sifrious\HarnessContractFixtures\Fixture;
+
+require dirname(__DIR__).'/vendor/autoload.php';
+
+$root = dirname(__DIR__);
+$fixtureJson = file_get_contents($root.'/fixtures/conversation-to-answer-v1.json');
+$schemaJson = file_get_contents($root.'/schemas/conversation-to-answer-v1.schema.json');
+
+if ($fixtureJson === false || $schemaJson === false) {
+    throw new RuntimeException('Fixture or schema could not be read.');
+}
+
+$fixtureObject = json_decode($fixtureJson, false, 512, JSON_THROW_ON_ERROR);
+$schemaObject = json_decode($schemaJson, false, 512, JSON_THROW_ON_ERROR);
+$result = (new Validator)->validate($fixtureObject, $schemaObject);
+
+if (! $result->isValid()) {
+    $errors = (new ErrorFormatter)->format($result->error());
+    throw new RuntimeException(json_encode($errors, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
+}
+
+$fixture = Fixture::load();
+$events = collectById($fixture['source']['conversation']['events']);
+$candidates = collectById($fixture['expected']['aleph']['candidates'], 'candidate_id');
+$accepted = collectById($fixture['expected']['funes']['records'], 'accepted_reference');
+$passages = collectById($fixture['expected']['menard']['passages'], 'passage_reference');
+
+foreach ($events as $event) {
+    $canonicalPayload = json_encode($event['raw_payload'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+    requireSame(hash('sha256', $canonicalPayload), $event['raw_payload_hash'], "raw payload hash for {$event['id']}");
+}
+
+requireSame(count($events), count($candidates), 'event and Aleph candidate counts');
+
+foreach ($candidates as $candidate) {
+    requirePresent($events, $candidate['raw_event_id'], 'Aleph raw event');
+    requireSame($events[$candidate['raw_event_id']]['raw_payload_hash'], $candidate['raw_input_hash'], "Aleph lineage hash for {$candidate['candidate_id']}");
+}
+
+foreach ($accepted as $record) {
+    requirePresent($candidates, $record['candidate_id'], 'Funes candidate');
+    requireSame($candidates[$record['candidate_id']]['raw_input_hash'], $record['payload_hash'], "Funes payload hash for {$record['accepted_reference']}");
+}
+
+foreach ($passages as $passage) {
+    foreach ($passage['accepted_references'] as $reference) {
+        requirePresent($accepted, $reference, 'Menard accepted reference');
+    }
+}
+
+foreach ($fixture['expected']['kilgore']['assertions'] as $assertion) {
+    if ($assertion['citations'] === []) {
+        throw new RuntimeException("Kilgore assertion [{$assertion['assertion_id']}] has no citations.");
+    }
+
+    foreach ($assertion['citations'] as $citation) {
+        requirePresent($accepted, $citation['accepted_reference'], 'Kilgore accepted reference');
+        requirePresent($passages, $citation['passage_reference'], 'Kilgore passage reference');
+    }
+}
+
+$missingFact = $fixture['source']['question']['deliberately_absent_fact'];
+requireSame([$missingFact], $fixture['expected']['kilgore']['completeness']['missing_facts'], 'Kilgore missing facts');
+requireSame('unknown', $fixture['expected']['kilgore']['uncertainty'][$missingFact], 'Kilgore absent-fact uncertainty');
+
+$encodedFixture = json_encode($fixture, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+
+if (preg_match('/(\/Users\/|\/home\/|gh[pousr]_[A-Za-z0-9_]{20,}|sk-(?:proj-)?[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{10,})/', $encodedFixture) === 1) {
+    throw new RuntimeException('Fixture contains a private path or credential-shaped value.');
+}
+
+requireSame($fixture, Fixture::load(), 'deterministic fixture load');
+
+fwrite(STDOUT, "conversation-to-answer-v1 verified\n");
+
+function collectById(array $items, string $key = 'id'): array
+{
+    $indexed = [];
+
+    foreach ($items as $item) {
+        $indexed[$item[$key]] = $item;
+    }
+
+    return $indexed;
+}
+
+function requirePresent(array $items, string $key, string $label): void
+{
+    if (! array_key_exists($key, $items)) {
+        throw new RuntimeException("{$label} [{$key}] does not exist.");
+    }
+}
+
+function requireSame(mixed $expected, mixed $actual, string $label): void
+{
+    if ($expected !== $actual) {
+        throw new RuntimeException("{$label} does not match.");
+    }
+}

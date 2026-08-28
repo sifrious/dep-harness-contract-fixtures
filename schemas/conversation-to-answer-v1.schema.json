@@ -1,0 +1,140 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://sifrious.dev/schemas/harness/conversation-to-answer-v1.schema.json",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["fixture_version", "fixture_id", "sanitization", "source", "expected"],
+    "properties": {
+        "fixture_version": {"const": 1},
+        "fixture_id": {"const": "conversation-to-answer-v1"},
+        "sanitization": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source", "private_content", "credentials", "provider_identifiers"],
+            "properties": {
+                "source": {"const": "synthetic structure modeled from Landing Claude history contracts"},
+                "private_content": {"const": "none"},
+                "credentials": {"const": "none"},
+                "provider_identifiers": {"const": "synthetic stable fixture identifiers"}
+            }
+        },
+        "source": {"$ref": "#/$defs/source"},
+        "expected": {"$ref": "#/$defs/expected"}
+    },
+    "$defs": {
+        "timestamp": {"type": "string", "format": "date-time"},
+        "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "reference": {"type": "string", "minLength": 3},
+        "event": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "kind", "parent_id", "provider_id", "occurred_at", "observed_at", "raw_payload", "raw_payload_hash"],
+            "properties": {
+                "id": {"$ref": "#/$defs/reference"},
+                "kind": {"enum": ["user_message", "assistant_message", "tool_invocation", "tool_result", "command"]},
+                "parent_id": {"type": ["string", "null"]},
+                "provider_id": {"$ref": "#/$defs/reference"},
+                "occurred_at": {"$ref": "#/$defs/timestamp"},
+                "observed_at": {"$ref": "#/$defs/timestamp"},
+                "raw_payload": {"type": "object"},
+                "raw_payload_hash": {"$ref": "#/$defs/hash"},
+                "file_reference": {"type": "string"},
+                "tool": {"type": "string"},
+                "command": {"type": "string"},
+                "output": {"type": "string"},
+                "exit_status": {"type": "integer"},
+                "text": {"type": "string"}
+            }
+        },
+        "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["project", "repository", "conversation", "question"],
+            "properties": {
+                "project": {
+                    "type": "object",
+                    "required": ["identity", "name"],
+                    "properties": {"identity": {"$ref": "#/$defs/reference"}, "name": {"type": "string"}}
+                },
+                "repository": {
+                    "type": "object",
+                    "required": ["identity", "project_identity", "name", "paths"],
+                    "properties": {
+                        "identity": {"$ref": "#/$defs/reference"},
+                        "project_identity": {"$ref": "#/$defs/reference"},
+                        "name": {"type": "string"},
+                        "paths": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+                    }
+                },
+                "conversation": {
+                    "type": "object",
+                    "required": ["provider", "provider_session_id", "events"],
+                    "properties": {
+                        "provider": {"const": "claude"},
+                        "provider_session_id": {"$ref": "#/$defs/reference"},
+                        "events": {"type": "array", "minItems": 6, "items": {"$ref": "#/$defs/event"}}
+                    }
+                },
+                "question": {
+                    "type": "object",
+                    "required": ["text", "deliberately_absent_fact"],
+                    "properties": {
+                        "text": {"type": "string", "minLength": 10},
+                        "deliberately_absent_fact": {"type": "string", "minLength": 3}
+                    }
+                }
+            }
+        },
+        "expected": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["aleph", "funes", "menard", "kilgore", "burdgeon"],
+            "properties": {
+                "aleph": {
+                    "type": "object",
+                    "required": ["normalizer", "candidate_schema", "candidates"],
+                    "properties": {
+                        "normalizer": {"const": "claude.conversation@1"},
+                        "candidate_schema": {"const": "aleph.envelope@1"},
+                        "candidates": {"type": "array", "minItems": 6, "items": {"type": "object"}}
+                    }
+                },
+                "funes": {
+                    "type": "object",
+                    "required": ["records", "replay_outcome"],
+                    "properties": {
+                        "records": {"type": "array", "minItems": 6, "items": {"type": "object"}},
+                        "replay_outcome": {"const": "replayed"}
+                    }
+                },
+                "menard": {
+                    "type": "object",
+                    "required": ["passages", "context_manifest"],
+                    "properties": {
+                        "passages": {"type": "array", "minItems": 2, "items": {"type": "object"}},
+                        "context_manifest": {"type": "object"}
+                    }
+                },
+                "kilgore": {
+                    "type": "object",
+                    "required": ["answer", "assertions", "uncertainty", "completeness"],
+                    "properties": {
+                        "answer": {"type": "string"},
+                        "assertions": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+                        "uncertainty": {"type": "object"},
+                        "completeness": {"type": "object"}
+                    }
+                },
+                "burdgeon": {
+                    "type": "object",
+                    "required": ["page", "citation_navigation", "affordances"],
+                    "properties": {
+                        "page": {"type": "object"},
+                        "citation_navigation": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+                        "affordances": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+                    }
+                }
+            }
+        }
+    }
+}

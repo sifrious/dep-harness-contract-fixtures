@@ -1,0 +1,176 @@
+{
+    "fixture_version": 1,
+    "fixture_id": "conversation-to-answer-v1",
+    "sanitization": {
+        "source": "synthetic structure modeled from Landing Claude history contracts",
+        "private_content": "none",
+        "credentials": "none",
+        "provider_identifiers": "synthetic stable fixture identifiers"
+    },
+    "source": {
+        "project": {
+            "identity": "project:atlas",
+            "name": "Atlas"
+        },
+        "repository": {
+            "identity": "repository:atlas-api",
+            "project_identity": "project:atlas",
+            "name": "atlas-api",
+            "paths": ["src/Parser.php", "tests/Feature/ParserTest.php"]
+        },
+        "conversation": {
+            "provider": "claude",
+            "provider_session_id": "session_fixture_01",
+            "events": [
+                {
+                    "id": "event:user:001",
+                    "kind": "user_message",
+                    "parent_id": null,
+                    "provider_id": "msg_fixture_user_01",
+                    "occurred_at": "2026-01-15T10:00:00+00:00",
+                    "observed_at": "2026-01-15T10:00:02+00:00",
+                    "text": "Run the parser test and explain the failure.",
+                    "raw_payload": {"role": "user", "text": "Run the parser test and explain the failure."},
+                    "raw_payload_hash": "90434f360bd7f2ba86d52e946f5d4b0399f6fe0ae4804a0c7e382c166cfc856c"
+                },
+                {
+                    "id": "event:assistant:001",
+                    "kind": "assistant_message",
+                    "parent_id": "event:user:001",
+                    "provider_id": "msg_fixture_assistant_01",
+                    "occurred_at": "2026-01-15T10:00:03+00:00",
+                    "observed_at": "2026-01-15T10:00:04+00:00",
+                    "text": "I will inspect the validation rule and run the targeted test.",
+                    "raw_payload": {"role": "assistant", "text": "I will inspect the validation rule and run the targeted test."},
+                    "raw_payload_hash": "2db4af2da037ebb18f42e7b6f4d52f2f887b81ffdcfebaa547f012145d18e846"
+                },
+                {
+                    "id": "event:tool:001",
+                    "kind": "tool_invocation",
+                    "parent_id": "event:assistant:001",
+                    "provider_id": "tool_fixture_read_01",
+                    "occurred_at": "2026-01-15T10:00:05+00:00",
+                    "observed_at": "2026-01-15T10:00:06+00:00",
+                    "tool": "read_file",
+                    "file_reference": "src/Parser.php",
+                    "raw_payload": {"tool": "read_file", "input": {"path": "src/Parser.php"}},
+                    "raw_payload_hash": "3ff8a7954f38cc7368aa4eef9d97a21542bf4dd686e9d21f7e336b7d944e1e93"
+                },
+                {
+                    "id": "event:tool-result:001",
+                    "kind": "tool_result",
+                    "parent_id": "event:tool:001",
+                    "provider_id": "tool_result_fixture_read_01",
+                    "occurred_at": "2026-01-15T10:00:06+00:00",
+                    "observed_at": "2026-01-15T10:00:07+00:00",
+                    "file_reference": "src/Parser.php",
+                    "text": "Validator::make($payload, ['source_type' => 'required']);",
+                    "raw_payload": {"tool_result_for": "tool_fixture_read_01", "content": "Validator::make($payload, ['source_type' => 'required']);"},
+                    "raw_payload_hash": "28f67a5df77246ae323c69d8907be0893375f256fe69bab7c079ac29d523f789"
+                },
+                {
+                    "id": "event:command:001",
+                    "kind": "command",
+                    "parent_id": "event:assistant:001",
+                    "provider_id": "command_fixture_01",
+                    "occurred_at": "2026-01-15T10:00:08+00:00",
+                    "observed_at": "2026-01-15T10:00:10+00:00",
+                    "command": "php artisan test --filter=ParserTest",
+                    "output": "Expected status 201, received 422. The source_type field is required.",
+                    "exit_status": 1,
+                    "raw_payload": {"command": "php artisan test --filter=ParserTest", "output": "Expected status 201, received 422. The source_type field is required.", "exit_status": 1},
+                    "raw_payload_hash": "739c19e3db463c26915e92fe0ce37d213ccbe30977c9e8aa8aa17e352ba9aefc"
+                },
+                {
+                    "id": "event:assistant:002",
+                    "kind": "assistant_message",
+                    "parent_id": "event:command:001",
+                    "provider_id": "msg_fixture_assistant_02",
+                    "occurred_at": "2026-01-15T10:00:11+00:00",
+                    "observed_at": "2026-01-15T10:00:12+00:00",
+                    "text": "The parser test fails because the request fixture omits the required source_type field, so validation returns 422 instead of 201.",
+                    "raw_payload": {"role": "assistant", "text": "The parser test fails because the request fixture omits the required source_type field, so validation returns 422 instead of 201."},
+                    "raw_payload_hash": "2a8d73b8e012baa6c74c3fe5b598e30d9cd1ad3ac700142059a72a21288b598c"
+                }
+            ]
+        },
+        "question": {
+            "text": "Why did the parser test return 422 instead of 201?",
+            "deliberately_absent_fact": "regression_introducing_commit"
+        }
+    },
+    "expected": {
+        "aleph": {
+            "normalizer": "claude.conversation@1",
+            "candidate_schema": "aleph.envelope@1",
+            "candidates": [
+                {"candidate_id": "candidate:event:user:001", "raw_event_id": "event:user:001", "raw_input_hash": "90434f360bd7f2ba86d52e946f5d4b0399f6fe0ae4804a0c7e382c166cfc856c", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:user:001", "provider_id": "msg_fixture_user_01", "event_type": "user_message", "parent_candidate_id": null, "occurred_at": "2026-01-15T10:00:00+00:00", "observed_at": "2026-01-15T10:00:02+00:00"},
+                {"candidate_id": "candidate:event:assistant:001", "raw_event_id": "event:assistant:001", "raw_input_hash": "2db4af2da037ebb18f42e7b6f4d52f2f887b81ffdcfebaa547f012145d18e846", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:assistant:001", "provider_id": "msg_fixture_assistant_01", "event_type": "assistant_message", "parent_candidate_id": "candidate:event:user:001", "occurred_at": "2026-01-15T10:00:03+00:00", "observed_at": "2026-01-15T10:00:04+00:00"},
+                {"candidate_id": "candidate:event:tool:001", "raw_event_id": "event:tool:001", "raw_input_hash": "3ff8a7954f38cc7368aa4eef9d97a21542bf4dd686e9d21f7e336b7d944e1e93", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:tool:001", "provider_id": "tool_fixture_read_01", "event_type": "tool_invocation", "parent_candidate_id": "candidate:event:assistant:001", "occurred_at": "2026-01-15T10:00:05+00:00", "observed_at": "2026-01-15T10:00:06+00:00"},
+                {"candidate_id": "candidate:event:tool-result:001", "raw_event_id": "event:tool-result:001", "raw_input_hash": "28f67a5df77246ae323c69d8907be0893375f256fe69bab7c079ac29d523f789", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:tool-result:001", "provider_id": "tool_result_fixture_read_01", "event_type": "tool_result", "parent_candidate_id": "candidate:event:tool:001", "occurred_at": "2026-01-15T10:00:06+00:00", "observed_at": "2026-01-15T10:00:07+00:00"},
+                {"candidate_id": "candidate:event:command:001", "raw_event_id": "event:command:001", "raw_input_hash": "739c19e3db463c26915e92fe0ce37d213ccbe30977c9e8aa8aa17e352ba9aefc", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:command:001", "provider_id": "command_fixture_01", "event_type": "command", "parent_candidate_id": "candidate:event:assistant:001", "occurred_at": "2026-01-15T10:00:08+00:00", "observed_at": "2026-01-15T10:00:10+00:00"},
+                {"candidate_id": "candidate:event:assistant:002", "raw_event_id": "event:assistant:002", "raw_input_hash": "2a8d73b8e012baa6c74c3fe5b598e30d9cd1ad3ac700142059a72a21288b598c", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:assistant:002", "provider_id": "msg_fixture_assistant_02", "event_type": "assistant_message", "parent_candidate_id": "candidate:event:command:001", "occurred_at": "2026-01-15T10:00:11+00:00", "observed_at": "2026-01-15T10:00:12+00:00"}
+            ]
+        },
+        "funes": {
+            "records": [
+                {"candidate_id": "candidate:event:user:001", "idempotency_key": "fixture:event:user:001", "outcome": "accepted", "disposition": "created", "accepted_reference": "funes:observation:fixture-001", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:user:001", "payload_hash": "90434f360bd7f2ba86d52e946f5d4b0399f6fe0ae4804a0c7e382c166cfc856c", "occurred_at": "2026-01-15T10:00:00+00:00", "observed_at": "2026-01-15T10:00:02+00:00", "parent_reference": null},
+                {"candidate_id": "candidate:event:assistant:001", "idempotency_key": "fixture:event:assistant:001", "outcome": "accepted", "disposition": "created", "accepted_reference": "funes:observation:fixture-002", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:assistant:001", "payload_hash": "2db4af2da037ebb18f42e7b6f4d52f2f887b81ffdcfebaa547f012145d18e846", "occurred_at": "2026-01-15T10:00:03+00:00", "observed_at": "2026-01-15T10:00:04+00:00", "parent_reference": "funes:observation:fixture-001"},
+                {"candidate_id": "candidate:event:tool:001", "idempotency_key": "fixture:event:tool:001", "outcome": "accepted", "disposition": "created", "accepted_reference": "funes:observation:fixture-003", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:tool:001", "payload_hash": "3ff8a7954f38cc7368aa4eef9d97a21542bf4dd686e9d21f7e336b7d944e1e93", "occurred_at": "2026-01-15T10:00:05+00:00", "observed_at": "2026-01-15T10:00:06+00:00", "parent_reference": "funes:observation:fixture-002"},
+                {"candidate_id": "candidate:event:tool-result:001", "idempotency_key": "fixture:event:tool-result:001", "outcome": "accepted", "disposition": "created", "accepted_reference": "funes:observation:fixture-004", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:tool-result:001", "payload_hash": "28f67a5df77246ae323c69d8907be0893375f256fe69bab7c079ac29d523f789", "occurred_at": "2026-01-15T10:00:06+00:00", "observed_at": "2026-01-15T10:00:07+00:00", "parent_reference": "funes:observation:fixture-003"},
+                {"candidate_id": "candidate:event:command:001", "idempotency_key": "fixture:event:command:001", "outcome": "accepted", "disposition": "created", "accepted_reference": "funes:observation:fixture-005", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:command:001", "payload_hash": "739c19e3db463c26915e92fe0ce37d213ccbe30977c9e8aa8aa17e352ba9aefc", "occurred_at": "2026-01-15T10:00:08+00:00", "observed_at": "2026-01-15T10:00:10+00:00", "parent_reference": "funes:observation:fixture-002"},
+                {"candidate_id": "candidate:event:assistant:002", "idempotency_key": "fixture:event:assistant:002", "outcome": "accepted", "disposition": "created", "accepted_reference": "funes:observation:fixture-006", "source_reference": "claude:session_fixture_01", "resource_reference": "claude:event:assistant:002", "payload_hash": "2a8d73b8e012baa6c74c3fe5b598e30d9cd1ad3ac700142059a72a21288b598c", "occurred_at": "2026-01-15T10:00:11+00:00", "observed_at": "2026-01-15T10:00:12+00:00", "parent_reference": "funes:observation:fixture-005"}
+            ],
+            "replay_outcome": "replayed"
+        },
+        "menard": {
+            "passages": [
+                {"passage_reference": "menard:passage:validation-rule", "accepted_references": ["funes:observation:fixture-004"], "text": "The parser requires the source_type field.", "order": 1},
+                {"passage_reference": "menard:passage:test-output", "accepted_references": ["funes:observation:fixture-005"], "text": "The parser test received 422 because source_type was required.", "order": 2}
+            ],
+            "context_manifest": {
+                "question": "Why did the parser test return 422 instead of 201?",
+                "ordered_passage_references": ["menard:passage:validation-rule", "menard:passage:test-output"],
+                "selection_reason": "Both passages directly describe the validation rule and observed failure.",
+                "token_budget": 120
+            }
+        },
+        "kilgore": {
+            "answer": "The request fixture omitted the required source_type field, so validation returned 422 before the parser could return 201.",
+            "assertions": [
+                {
+                    "assertion_id": "assertion:parser-validation-failure",
+                    "text": "The request fixture omitted the required source_type field, causing validation to return 422.",
+                    "status": "supported",
+                    "citations": [
+                        {"accepted_reference": "funes:observation:fixture-004", "passage_reference": "menard:passage:validation-rule"},
+                        {"accepted_reference": "funes:observation:fixture-005", "passage_reference": "menard:passage:test-output"}
+                    ]
+                }
+            ],
+            "uncertainty": {
+                "regression_introducing_commit": "unknown"
+            },
+            "completeness": {
+                "status": "incomplete",
+                "answered_question": true,
+                "missing_facts": ["regression_introducing_commit"],
+                "message": "The conversation does not identify the commit that introduced the validation requirement."
+            }
+        },
+        "burdgeon": {
+            "page": {
+                "landmark": "main",
+                "heading": "Conversation answer",
+                "question": "Why did the parser test return 422 instead of 201?",
+                "answer_source": "kilgore",
+                "completeness_notice": "The conversation does not identify the commit that introduced the validation requirement."
+            },
+            "citation_navigation": [
+                {"label": "Validation rule", "accepted_reference": "funes:observation:fixture-004"},
+                {"label": "Test output", "accepted_reference": "funes:observation:fixture-005"}
+            ],
+            "affordances": ["ask_another_question", "open_citation", "inspect_completeness"]
+        }
+    }
+}
