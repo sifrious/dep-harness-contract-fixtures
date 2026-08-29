@@ -85,9 +85,41 @@ $steps = collectById($lifecycle['plan']['steps']);
 requireSame([], $steps['step_discuss']['materialized_execution_request_ids'], 'discussion-only materialization');
 requireSame(['request_01'], $steps['step_implement']['materialized_execution_request_ids'], 'execution materialization');
 requireSame($lifecycle['user_input']['id'], $lifecycle['intent']['source_input_id'], 'immutable input lineage');
+requireSame(
+    'auth should work globally and the app should know whether any machines have ever been connected',
+    $lifecycle['user_input']['exact_text'],
+    'immutable canonical source text',
+);
+$inputReference = $lifecycle['user_input']['reference'];
+requireSame('sifrious.cross-package-reference', $inputReference['contract'], 'portable reference contract');
+requireSame(1, $inputReference['contract_version'], 'portable reference version');
+requireSame('message_01', $inputReference['provenance']['id'], 'nested provenance reference');
+requireSame($inputReference, json_decode(json_encode($inputReference, JSON_THROW_ON_ERROR), true, flags: JSON_THROW_ON_ERROR), 'portable reference JSON round trip');
+requireSame('intent_01_v2', $lifecycle['intent']['superseded_by'], 'intent supersession');
+$authorization = $lifecycle['authorization'];
+requireSame('sifrious.authorization-context', $authorization['contract'], 'portable authorization contract');
+requireSame('account_a', $authorization['actor']['actor']['id'], 'actor identity');
+requireSame('tenant_a', $authorization['tenant']['tenant']['id'], 'tenant identity');
+requireSame($authorization, json_decode(json_encode($authorization, JSON_THROW_ON_ERROR), true, flags: JSON_THROW_ON_ERROR), 'authorization JSON queue round trip');
+$authorizationJson = strtolower(json_encode($authorization, JSON_THROW_ON_ERROR));
+foreach (['token', 'password', 'secret', 'credential', 'session'] as $forbidden) {
+    if (str_contains($authorizationJson, $forbidden)) {
+        throw new RuntimeException("Authorization fixture contains forbidden credential-shaped field [{$forbidden}].");
+    }
+}
+$workspace = $lifecycle['preflight']['workspace_reference'];
+requireSame('stacks.workspace-reference.v1', $workspace['schema'], 'Stacks workspace schema');
+requireSame($workspace['head'], $lifecycle['preflight']['starting_revision'], 'workspace starting revision');
+requireSame('workspace_01', $workspace['workspace_id'], 'stable workspace identity');
+foreach ($lifecycle['stage_1_negative_cases'] as $negativeCase) {
+    requireSame(0, $negativeCase['expected_provider_call_count'], "{$negativeCase['id']} provider call count");
+}
+requireSame('failed', $lifecycle['failed_verification_result']['required_verification'], 'failed verification outcome');
+requireSame('failed', $lifecycle['failed_verification_result']['canonical_status'], 'failed verification canonical status');
+requireSame(1, $lifecycle['failed_verification_result']['expected_finalization_count'], 'terminal finalization count');
 $origin = $lifecycle['execution_request']['origin'];
 requireSame(
-    ['input_01', 'intent_01_v1', 'conversation_01', 'plan_01', 'step_implement'],
+    ['input_01', 'intent_01_v2', 'conversation_01', 'plan_01', 'step_implement'],
     [$origin['user_input'], $origin['intent'], $origin['conversation'], $origin['plan'], $origin['plan_step']],
     'execution request deliberation origin',
 );

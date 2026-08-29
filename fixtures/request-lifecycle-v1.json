@@ -1,19 +1,89 @@
 {
   "fixture_id": "request-lifecycle-v1",
-  "user_input": {"id": "input_01", "exact_text": "I think authentication should work globally.", "immutable": true},
-  "intent": {"id": "intent_01_v1", "source_input_id": "input_01", "interpretation_version": 1},
-  "conversation": {"id": "conversation_01", "input_ids": ["input_01"], "intent_ids": ["intent_01_v1"]},
+  "fixture_version": 2,
+  "user_input": {
+    "id": "input_01",
+    "exact_text": "auth should work globally and the app should know whether any machines have ever been connected",
+    "immutable": true,
+    "reference": {
+      "contract": "sifrious.cross-package-reference",
+      "contract_version": 1,
+      "owner": "sifrious/elwin",
+      "type": "user-input",
+      "id": "input_01",
+      "object_version": "1",
+      "provenance": {
+        "contract": "sifrious.cross-package-reference",
+        "contract_version": 1,
+        "owner": "sifrious/burdgeon",
+        "type": "conversation-message",
+        "id": "message_01",
+        "object_version": "1",
+        "provenance": null
+      }
+    }
+  },
+  "intent": {"id": "intent_01_v1", "source_input_id": "input_01", "interpretation_version": 1, "superseded_by": "intent_01_v2"},
+  "authorization": {
+    "contract": "sifrious.authorization-context",
+    "contract_version": 1,
+    "actor": {
+      "contract": "sifrious.actor-context",
+      "contract_version": 1,
+      "actor": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/zahir", "type": "account", "id": "account_a", "object_version": null, "provenance": null},
+      "kind": "human",
+      "acting_for": null,
+      "originating_service": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/logres", "type": "application", "id": "stage-1-fixture", "object_version": null, "provenance": null},
+      "provenance": null
+    },
+    "tenant": {
+      "contract": "sifrious.tenant-scope",
+      "contract_version": 1,
+      "kind": "workspace",
+      "tenant": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/zahir", "type": "workspace", "id": "tenant_a", "object_version": null, "provenance": null}
+    },
+    "correlation": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/logres", "type": "request", "id": "request_01", "object_version": null, "provenance": null},
+    "provenance": null
+  },
+  "conversation": {"id": "conversation_01", "input_ids": ["input_01"], "intent_ids": ["intent_01_v1", "intent_01_v2"]},
   "plan": {"id": "plan_01", "conversation_id": "conversation_01", "steps": [
     {"id": "step_discuss", "disposition": "deliberation", "materialized_execution_request_ids": []},
     {"id": "step_implement", "disposition": "execution", "materialized_execution_request_ids": ["request_01"]}
   ]},
-  "execution_request": {"id": "request_01", "origin": {"user_input": "input_01", "intent": "intent_01_v1", "conversation": "conversation_01", "plan": "plan_01", "plan_step": "step_implement"}},
-  "preflight": {"request_id": "request_01", "starting_revision": "sha_before", "workspace_reference": "workspace_fixture"},
+  "execution_request": {"id": "request_01", "origin": {"user_input": "input_01", "intent": "intent_01_v2", "conversation": "conversation_01", "plan": "plan_01", "plan_step": "step_implement"}},
+  "preflight": {
+    "request_id": "request_01",
+    "workspace_reference": {
+      "schema": "stacks.workspace-reference.v1",
+      "workspace_id": "workspace_01",
+      "repository": {"id": "repository_01", "remote_identity": "github:sifrious/dep-logres"},
+      "checkout": {"id": "checkout_01", "kind": "worktree"},
+      "availability": "available",
+      "current_path": "/fixture/workspaces/checkout_01",
+      "branch": "fixture/stage-1",
+      "head": "1111111111111111111111111111111111111111"
+    },
+    "starting_revision": "1111111111111111111111111111111111111111"
+  },
+  "stage_1_negative_cases": [
+    {"id": "missing_actor", "authorization": null, "workspace_availability": "available", "expected_provider_call_count": 0, "expected_phase": "Authorization"},
+    {"id": "cross_tenant", "actor_account_id": "account_b", "actor_tenant_id": "tenant_b", "resource_tenant_id": "tenant_a", "workspace_availability": "available", "expected_provider_call_count": 0, "expected_phase": "Authorization"},
+    {"id": "workspace_unavailable", "actor_account_id": "account_a", "actor_tenant_id": "tenant_a", "resource_tenant_id": "tenant_a", "workspace_availability": "unavailable", "expected_provider_call_count": 0, "expected_phase": "Workspace"}
+  ],
   "run_result": {
     "run_id": "run_01",
     "provider_claim": "Implementation complete and tests pass.",
+    "required_verification": "passed",
+    "canonical_status": "succeeded",
     "observed_outcome": "Commit produced and verification independently passed.",
     "evidence": [{"kind": "git.commit", "reference": "commit_01"}, {"kind": "verification", "reference": "test_run_01"}]
+  },
+  "failed_verification_result": {
+    "run_id": "run_02",
+    "provider_claim": "Implementation complete and tests pass.",
+    "required_verification": "failed",
+    "canonical_status": "failed",
+    "expected_finalization_count": 1
   },
   "historical_relations": [
     {"subject": "input_01", "predicate": "started", "object": "conversation_01"},
