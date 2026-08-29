@@ -80,6 +80,37 @@ requireSame($fixture, Fixture::load(), 'deterministic fixture load');
 
 fwrite(STDOUT, "conversation-to-answer-v1 verified\n");
 
+$lifecycle = Fixture::load('request-lifecycle-v1');
+$steps = collectById($lifecycle['plan']['steps']);
+requireSame([], $steps['step_discuss']['materialized_execution_request_ids'], 'discussion-only materialization');
+requireSame(['request_01'], $steps['step_implement']['materialized_execution_request_ids'], 'execution materialization');
+requireSame($lifecycle['user_input']['id'], $lifecycle['intent']['source_input_id'], 'immutable input lineage');
+$origin = $lifecycle['execution_request']['origin'];
+requireSame(
+    ['input_01', 'intent_01_v1', 'conversation_01', 'plan_01', 'step_implement'],
+    [$origin['user_input'], $origin['intent'], $origin['conversation'], $origin['plan'], $origin['plan_step']],
+    'execution request deliberation origin',
+);
+$relations = [];
+foreach ($lifecycle['historical_relations'] as $relation) {
+    $relations[$relation['subject'].'|'.$relation['predicate'].'|'.$relation['object']] = true;
+}
+foreach ([
+    'input_01|started|conversation_01',
+    'conversation_01|produced|plan_01',
+    'plan_01|contains|step_implement',
+    'step_implement|materialized_as|request_01',
+    'request_01|produced|run_01',
+    'run_01|produced|commit_01',
+    'commit_01|verified_by|test_run_01',
+] as $requiredRelation) {
+    requirePresent($relations, $requiredRelation, 'request lifecycle relation');
+}
+if ($lifecycle['run_result']['provider_claim'] === $lifecycle['run_result']['observed_outcome']) {
+    throw new RuntimeException('Provider claim and observed outcome must remain distinct fields.');
+}
+fwrite(STDOUT, "request-lifecycle-v1 verified\n");
+
 function collectById(array $items, string $key = 'id'): array
 {
     $indexed = [];

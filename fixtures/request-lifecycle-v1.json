@@ -1,0 +1,27 @@
+{
+  "fixture_id": "request-lifecycle-v1",
+  "user_input": {"id": "input_01", "exact_text": "I think authentication should work globally.", "immutable": true},
+  "intent": {"id": "intent_01_v1", "source_input_id": "input_01", "interpretation_version": 1},
+  "conversation": {"id": "conversation_01", "input_ids": ["input_01"], "intent_ids": ["intent_01_v1"]},
+  "plan": {"id": "plan_01", "conversation_id": "conversation_01", "steps": [
+    {"id": "step_discuss", "disposition": "deliberation", "materialized_execution_request_ids": []},
+    {"id": "step_implement", "disposition": "execution", "materialized_execution_request_ids": ["request_01"]}
+  ]},
+  "execution_request": {"id": "request_01", "origin": {"user_input": "input_01", "intent": "intent_01_v1", "conversation": "conversation_01", "plan": "plan_01", "plan_step": "step_implement"}},
+  "preflight": {"request_id": "request_01", "starting_revision": "sha_before", "workspace_reference": "workspace_fixture"},
+  "run_result": {
+    "run_id": "run_01",
+    "provider_claim": "Implementation complete and tests pass.",
+    "observed_outcome": "Commit produced and verification independently passed.",
+    "evidence": [{"kind": "git.commit", "reference": "commit_01"}, {"kind": "verification", "reference": "test_run_01"}]
+  },
+  "historical_relations": [
+    {"subject": "input_01", "predicate": "started", "object": "conversation_01"},
+    {"subject": "conversation_01", "predicate": "produced", "object": "plan_01"},
+    {"subject": "plan_01", "predicate": "contains", "object": "step_implement"},
+    {"subject": "step_implement", "predicate": "materialized_as", "object": "request_01"},
+    {"subject": "request_01", "predicate": "produced", "object": "run_01"},
+    {"subject": "run_01", "predicate": "produced", "object": "commit_01"},
+    {"subject": "commit_01", "predicate": "verified_by", "object": "test_run_01"}
+  ]
+}

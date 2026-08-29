@@ -1,6 +1,6 @@
 # Harness contract fixtures
 
-This test-only package contains one sanitized executable fixture shared by Aleph, Funes, Menard, Kilgore, and Burdgeon. It owns fixture transport and verification only. Each domain package remains responsible for interpreting and testing its own boundary section.
+This test-only package contains sanitized executable fixtures shared by Aleph, Elwin, Titan, Logres, Funes, Menard, Kilgore, and Burdgeon. It owns fixture transport and verification only. Each domain package remains responsible for interpreting and testing its own boundary section.
 
 ## Use
 
@@ -12,6 +12,8 @@ $expectedAleph = Fixture::boundary('aleph');
 ```
 
 Downstream tests consume the preceding boundary from the same fixture. They do not copy expected identities, provenance, passages, assertions, or citations into package-local fixture files.
+
+`request-lifecycle-v1` proves input → deliberation → planning → explicit materialization → preflight → result → historical graph lineage, including a discussion step that intentionally creates no executable work.
 
 ## Verify
 
