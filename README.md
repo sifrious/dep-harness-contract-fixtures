@@ -17,7 +17,7 @@ $expectedAleph = Fixture::boundary('aleph');
 
 Downstream tests consume the preceding boundary from the same fixture. They do not copy expected identities, provenance, passages, assertions, or citations into package-local fixture files.
 
-`request-lifecycle-v1` proves input → deliberation → planning → explicit materialization → preflight → result → historical graph lineage, including a discussion step that intentionally creates no executable work.
+`request-lifecycle-v1` proves input → deliberation → planning → explicit materialization → preflight → result → historical graph lineage, including a discussion step that intentionally creates no executable work. Its Stage 1 section pins the portable v1 reference wire shape (including nested provenance), actor/tenant separation, Stacks-owned workspace identity, zero-provider-call authorization/workspace failures, and failed-verification finalization semantics.
 
 ## Verify
 
