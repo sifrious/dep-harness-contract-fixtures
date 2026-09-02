@@ -158,7 +158,7 @@
                 "message": "The conversation does not identify the commit that introduced the validation requirement."
             }
         },
-        "burdgeon": {
+        "burdgen": {
             "page": {
                 "landmark": "main",
                 "heading": "Conversation answer",

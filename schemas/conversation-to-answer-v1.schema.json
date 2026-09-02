@@ -88,7 +88,7 @@
         "expected": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["aleph", "funes", "menard", "kilgore", "burdgeon"],
+            "required": ["aleph", "funes", "menard", "kilgore", "burdgen"],
             "properties": {
                 "aleph": {
                     "type": "object",
@@ -125,7 +125,7 @@
                         "completeness": {"type": "object"}
                     }
                 },
-                "burdgeon": {
+                "burdgen": {
                     "type": "object",
                     "required": ["page", "citation_navigation", "affordances"],
                     "properties": {
