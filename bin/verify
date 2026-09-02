@@ -124,6 +124,26 @@ requireSame([], $lifecycle['twinkle_variants']['unmaterialized_proposal']['obser
 requireSame(true, $lifecycle['twinkle_variants']['without_twinkle']['origin_lineage_preserved'], 'no-Twinkle lineage');
 $multiWorkKit = $lifecycle['multi_work_kit_variant'];
 requireSame(count($multiWorkKit['work_kit_ids']), $multiWorkKit['distinct_origin_relation_count'], 'multi-work-kit origin relations');
+$stage2 = $lifecycle['stage_2'];
+requireSame(['burdgen', 'mcp:codex'], $stage2['conversation']['source_adapters'], 'provider-neutral multi-source conversation');
+requireSame(true, $stage2['conversation']['can_finish_without_run'], 'conversation can finish without Run');
+foreach ($stage2['dispositions'] as $disposition) {
+    requireSame(0, $disposition['provider_call_count'], "{$disposition['id']} provider call count");
+}
+requireSame(false, $stage2['twinkle']['execution_authorized'], 'accepted Twinkle does not authorize execution');
+requireSame(2, count($stage2['twinkle']['promotion_attempts']), 'Twinkle retains multiple promotion attempts');
+$materializations = collectById($stage2['work_kit_materializations'], 'plan_step_id');
+requireSame([], $materializations['step_discuss']['work_kit_ids'], 'Stage 2 zero WorkKit materialization');
+requireSame(1, count($materializations['step_implement']['work_kit_ids']), 'Stage 2 one WorkKit materialization');
+requireSame(2, count($materializations['step_multi']['work_kit_ids']), 'Stage 2 many WorkKit materialization');
+$stage2Context = $stage2['execution_context'];
+requireSame('stacks.workspace-reference.v1', $stage2Context['workspace_reference']['schema'], 'Stage 2 workspace reference schema');
+requireSame('stacks.execution-provenance.v1', $stage2Context['execution_provenance']['schema'], 'Stage 2 execution provenance schema');
+requireSame($stage2Context['adapter_payloads']['codex'], $stage2Context['adapter_payloads']['claude'], 'Codex and Claude Stacks context');
+requireSame($stage2Context['workspace_reference']['workspace_id'], $stage2Context['execution_provenance']['workspace_id'], 'Stage 2 stable workspace identity');
+if ($stage2Context['workspace_reference']['workspace_id'] === $stage2Context['workspace_reference']['current_path']) {
+    throw new RuntimeException('Stage 2 path cannot be workspace identity.');
+}
 requireSame(1, $lifecycle['funes_replay']['historical_effect_count'], 'Funes idempotent replay effect count');
 requireSame('input_01', $lifecycle['sha_traversal']['recovered_origin'], 'SHA traversal origin');
 $origin = $lifecycle['execution_request']['origin'];
