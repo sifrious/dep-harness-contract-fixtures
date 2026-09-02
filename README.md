@@ -1,5 +1,9 @@
 # Harness contract fixtures
 
+> **License:** Copyright © 2026 Sifrious. All rights reserved. This is
+> publicly viewable proprietary software, not open-source software. See
+> [LICENSE.md](LICENSE.md).
+
 This test-only package contains sanitized executable fixtures shared by Aleph, Elwin, Titan, Logres, Funes, Menard, Kilgore, and Burdgen. It owns fixture transport and verification only. Each domain package remains responsible for interpreting and testing its own boundary section.
 
 ## Use
