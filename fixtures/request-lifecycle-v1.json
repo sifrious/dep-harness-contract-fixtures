@@ -15,7 +15,7 @@
       "provenance": {
         "contract": "sifrious.cross-package-reference",
         "contract_version": 1,
-        "owner": "sifrious/burdgeon",
+        "owner": "sifrious/burdgen",
         "type": "conversation-message",
         "id": "message_01",
         "object_version": "1",
@@ -39,37 +39,60 @@
     "tenant": {
       "contract": "sifrious.tenant-scope",
       "contract_version": 1,
-      "kind": "workspace",
-      "tenant": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/zahir", "type": "workspace", "id": "tenant_a", "object_version": null, "provenance": null}
+      "kind": "account",
+      "tenant": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/zahir", "type": "account-scope", "id": "tenant_a", "object_version": null, "provenance": null}
     },
     "correlation": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/logres", "type": "request", "id": "request_01", "object_version": null, "provenance": null},
     "provenance": null
   },
   "conversation": {"id": "conversation_01", "input_ids": ["input_01"], "intent_ids": ["intent_01_v1", "intent_01_v2"]},
+  "twinkle_variants": {
+    "with_twinkle": {
+      "reference": {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/elwin", "type": "twinkle", "id": "twinkle_01", "object_version": "3", "provenance": null},
+      "status": "accepted",
+      "execution_authorized": false,
+      "promotion": {
+        "idempotency_key": "promote_twinkle_01_v3",
+        "status": "succeeded",
+        "work_references": [
+          {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/titan", "type": "plan", "id": "plan_01", "object_version": "1", "provenance": null},
+          {"contract": "sifrious.cross-package-reference", "contract_version": 1, "owner": "sifrious/titan", "type": "work-kit", "id": "workkit_01", "object_version": "1", "provenance": null}
+        ]
+      }
+    },
+    "without_twinkle": {"direct_execution_candidate": true, "explicit_user_selection": true, "origin_lineage_preserved": true},
+    "unmaterialized_proposal": {"proposed_target": "src/NeverCreated.php", "status": "failed", "observed_result_references": []}
+  },
   "plan": {"id": "plan_01", "conversation_id": "conversation_01", "steps": [
     {"id": "step_discuss", "disposition": "deliberation", "materialized_execution_request_ids": []},
     {"id": "step_implement", "disposition": "execution", "materialized_execution_request_ids": ["request_01"]}
   ]},
-  "execution_request": {"id": "request_01", "origin": {"user_input": "input_01", "intent": "intent_01_v2", "conversation": "conversation_01", "plan": "plan_01", "plan_step": "step_implement"}},
+  "execution_request": {"id": "request_01", "origin": {"user_input": "input_01", "intent": "intent_01_v2", "conversation": "conversation_01", "twinkle": "twinkle_01", "plan": "plan_01", "work_kit": "workkit_01", "plan_step": "step_implement"}},
   "preflight": {
     "request_id": "request_01",
-    "workspace_reference": {
-      "schema": "stacks.workspace-reference.v1",
-      "workspace_id": "workspace_01",
+    "execution_context_reference": {
+      "schema": "stacks.execution-context-reference.v1",
+      "context_id": "execution_context_01",
       "repository": {"id": "repository_01", "remote_identity": "github:sifrious/dep-logres"},
-      "checkout": {"id": "checkout_01", "kind": "worktree"},
+      "checkout": {"id": "checkout_01", "kind": "checkout"},
       "availability": "available",
-      "current_path": "/fixture/workspaces/checkout_01",
+      "current_path": "/fixture/checkouts/checkout_01",
       "branch": "fixture/stage-1",
       "head": "1111111111111111111111111111111111111111"
     },
     "starting_revision": "1111111111111111111111111111111111111111"
   },
   "stage_1_negative_cases": [
-    {"id": "missing_actor", "authorization": null, "workspace_availability": "available", "expected_provider_call_count": 0, "expected_phase": "Authorization"},
-    {"id": "cross_tenant", "actor_account_id": "account_b", "actor_tenant_id": "tenant_b", "resource_tenant_id": "tenant_a", "workspace_availability": "available", "expected_provider_call_count": 0, "expected_phase": "Authorization"},
-    {"id": "workspace_unavailable", "actor_account_id": "account_a", "actor_tenant_id": "tenant_a", "resource_tenant_id": "tenant_a", "workspace_availability": "unavailable", "expected_provider_call_count": 0, "expected_phase": "Workspace"}
+    {"id": "missing_actor", "authorization": null, "execution_context_availability": "available", "expected_provider_call_count": 0, "expected_phase": "Authorization"},
+    {"id": "cross_tenant", "actor_account_id": "account_b", "actor_tenant_id": "tenant_b", "resource_tenant_id": "tenant_a", "execution_context_availability": "available", "expected_provider_call_count": 0, "expected_phase": "Authorization", "visible_private_relation_count": 0},
+    {"id": "execution_context_unavailable", "actor_account_id": "account_a", "actor_tenant_id": "tenant_a", "resource_tenant_id": "tenant_a", "execution_context_availability": "unavailable", "expected_provider_call_count": 0, "expected_phase": "ExecutionContext"}
   ],
+  "multi_work_kit_variant": {
+    "plan_id": "plan_02",
+    "work_kit_ids": ["workkit_02", "workkit_03"],
+    "execution_request_ids": ["request_02", "request_03"],
+    "distinct_origin_relation_count": 2
+  },
   "run_result": {
     "run_id": "run_01",
     "provider_claim": "Implementation complete and tests pass.",
@@ -87,11 +110,15 @@
   },
   "historical_relations": [
     {"subject": "input_01", "predicate": "started", "object": "conversation_01"},
+    {"subject": "conversation_01", "predicate": "proposed", "object": "twinkle_01"},
+    {"subject": "twinkle_01", "predicate": "promoted_to", "object": "plan_01"},
     {"subject": "conversation_01", "predicate": "produced", "object": "plan_01"},
     {"subject": "plan_01", "predicate": "contains", "object": "step_implement"},
     {"subject": "step_implement", "predicate": "materialized_as", "object": "request_01"},
     {"subject": "request_01", "predicate": "produced", "object": "run_01"},
     {"subject": "run_01", "predicate": "produced", "object": "commit_01"},
     {"subject": "commit_01", "predicate": "verified_by", "object": "test_run_01"}
-  ]
+  ],
+  "funes_replay": {"delivery_count": 2, "historical_effect_count": 1},
+  "sha_traversal": {"start": "commit_01", "recovered_origin": "input_01"}
 }

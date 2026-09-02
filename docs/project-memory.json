@@ -3,7 +3,7 @@
     "project": "Harness Contract Fixtures",
     "updated_at": "2026-08-28T03:40:00Z",
     "facts": [
-        {"id": "F-001", "statement": "MME-1367 requires Aleph, Funes, Menard, Kilgore, and Burdgeon to consume one sanitized executable fixture."},
+        {"id": "F-001", "statement": "MME-1367 requires Aleph, Funes, Menard, Kilgore, and Burdgen to consume one sanitized executable fixture."},
         {"id": "F-002", "statement": "Menard and Kilgore have no domain contracts yet, while Aleph and Funes have active uncommitted contract work."}
     ],
     "assumptions": [
@@ -29,9 +29,9 @@
         {"id": "SPINE-002", "name": "Conversation-to-answer acceptance fixture", "stage": "MVP", "status": "in_progress"}
     ],
     "workflows": [
-        {"id": "W-001", "name": "Conversation to answer", "states": ["raw_provider_events", "aleph_candidates", "funes_accepted_history", "menard_context", "kilgore_answer", "burdgeon_presentation"]}
+        {"id": "W-001", "name": "Conversation to answer", "states": ["raw_provider_events", "aleph_candidates", "funes_accepted_history", "menard_context", "kilgore_answer", "burdgen_presentation"]}
     ],
     "content_opportunities": [
-        {"id": "C-001", "format": "post", "user_problem": "Cross-repository acceptance tests drift when each package owns a copy of the scenario.", "concept": "Chain stable identities through one data-only fixture while keeping domain assertions in their owning packages.", "technology": "Composer, JSON Schema, contract tests", "project_context": "Burdgeon Harness", "audience": "intermediate package authors", "hook": "A shared fixture can connect packages without becoming a shared domain model."}
+        {"id": "C-001", "format": "post", "user_problem": "Cross-repository acceptance tests drift when each package owns a copy of the scenario.", "concept": "Chain stable identities through one data-only fixture while keeping domain assertions in their owning packages.", "technology": "Composer, JSON Schema, contract tests", "project_context": "Burdgen Harness", "audience": "intermediate package authors", "hook": "A shared fixture can connect packages without becoming a shared domain model."}
     ]
 }

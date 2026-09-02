@@ -8,7 +8,7 @@
 
 ## Context
 
-Aleph, Funes, Menard, Kilgore, and Burdgeon must consume one executable fixture without making a domain package depend on an application or a sibling's persistence model. Repository-local copies would drift and would make repeated expected data separate authorities. The package is justified now because MME-1367 explicitly requires a shared cross-repository contract and provider details must stop at the Aleph boundary.
+Aleph, Funes, Menard, Kilgore, and Burdgen must consume one executable fixture without making a domain package depend on an application or a sibling's persistence model. Repository-local copies would drift and would make repeated expected data separate authorities. The package is justified now because MME-1367 explicitly requires a shared cross-repository contract and provider details must stop at the Aleph boundary.
 
 ## Options
 
