@@ -93,6 +93,68 @@
     "execution_request_ids": ["request_02", "request_03"],
     "distinct_origin_relation_count": 2
   },
+  "stage_2": {
+    "conversation": {
+      "id": "conversation_01",
+      "source_adapters": ["burdgen", "mcp:codex"],
+      "exact_input_id": "input_01",
+      "selected_intent_id": "intent_01_v2",
+      "clarification": {"question_id": "question_01", "response_id": "response_01"},
+      "can_finish_without_run": true
+    },
+    "dispositions": [
+      {"id": "disposition_vague", "readiness": "ready_for_planning", "allowed": ["clarify", "plan"], "provider_call_count": 0},
+      {"id": "disposition_direct", "readiness": "direct_execution_candidate", "requires_explicit_user_selection": true, "provider_call_count": 0},
+      {"id": "disposition_blocked", "readiness": "blocked", "blocked_reason": "execution_context_authorization_missing", "provider_call_count": 0}
+    ],
+    "twinkle": {
+      "id": "twinkle_01",
+      "proposal_status": "accepted",
+      "execution_authorized": false,
+      "promotion_attempts": [
+        {"id": "promotion_01", "result_refs": ["plan_01"]},
+        {"id": "promotion_02", "result_refs": ["work_item_01", "work_item_02"]}
+      ],
+      "next_allowed_statuses": ["deferred", "active"]
+    },
+    "work_kit_materializations": [
+      {"plan_step_id": "step_discuss", "work_kit_ids": []},
+      {"plan_step_id": "step_implement", "work_kit_ids": ["work_kit_01"]},
+      {"plan_step_id": "step_multi", "work_kit_ids": ["work_kit_02", "work_kit_03"]}
+    ],
+    "common_origin": {
+      "user_input": "input_01",
+      "intent": "intent_01_v2",
+      "conversation": "conversation_01",
+      "plan": "plan_01"
+    },
+    "execution_context": {
+      "workspace_reference": {
+        "schema": "stacks.workspace-reference.v1",
+        "workspace_id": "workspace_01",
+        "repository": {"id": "repository_01", "remote_identity": "github:sifrious/dep-logres"},
+        "checkout": {"id": "checkout_01", "kind": "worktree"},
+        "availability": "available",
+        "current_path": "/fixture/workspaces/checkout_01",
+        "branch": "fixture/stage-2",
+        "head": "1111111111111111111111111111111111111111"
+      },
+      "execution_provenance": {
+        "schema": "stacks.execution-provenance.v1",
+        "workspace_id": "workspace_01",
+        "repository": {"id": "repository_01", "remote_identity": "github:sifrious/dep-logres", "remote_url": "git@example.test:sifrious/dep-logres.git"},
+        "checkout": {"id": "checkout_01", "kind": "worktree", "execution_path": "/fixture/workspaces/checkout_01"},
+        "starting_revision": "1111111111111111111111111111111111111111",
+        "branch": "fixture/stage-2",
+        "captured_at": "2026-09-02T03:00:00+00:00",
+        "environment": {"runtime": "fixture"}
+      },
+      "adapter_payloads": {
+        "codex": {"workspace_id": "workspace_01", "checkout_id": "checkout_01", "starting_revision": "1111111111111111111111111111111111111111"},
+        "claude": {"workspace_id": "workspace_01", "checkout_id": "checkout_01", "starting_revision": "1111111111111111111111111111111111111111"}
+      }
+    }
+  },
   "run_result": {
     "run_id": "run_01",
     "provider_claim": "Implementation complete and tests pass.",
